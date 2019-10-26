@@ -1,0 +1,132 @@
+
+.boundary {
+  fill: #ddd;
+  stroke: #888;
+  stroke-linejoin: round;
+}
+svg {
+  /* border-style: solid; */
+  border-style: none;
+  /* border-width: 1px;
+  border-color: #ccc; */
+}
+#back2nation {
+  display: none;
+}
+#countyselection {
+  display: none;
+  flex-flow: column;
+  margin-top: 5px;
+}
+#countypicker {
+  font-size: 1em;
+}
+#labeltip {
+  position: absolute;
+  display: flex;
+  flex-flow: column nowrap;
+  z-index: 2;
+  background: rgba(255,88,88,0.8);
+  border: 1px solid darkred;
+  width:200px;
+  height:40px;
+  color:white;
+  font-size: 14px;
+  padding: 5px;
+  text-align: center;
+  top:-150px;
+  left:-150px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+#maincontainer {
+  width: 98%;
+  max-width: 1280px;
+  max-height: 1024px;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#mapcontainer {
+  width: 65%;
+  height: 99%;
+  margin: 0;
+  display: flex;
+  flex-flow: column;
+}
+
+#map {
+  max-width: 100%;
+}
+#mapnote {
+  display: none;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  padding: 4px 0px 4px 0px;
+  border: 1px solid lightgrey;
+  color: red;
+  font-weight: bold;
+  box-shadow: 2px 2px #bbbbbb;
+  max-width: 75%;
+  align-content: center;
+  text-align: center;
+}
+#mapcontrols {
+  width: 33%;
+  /* border: 1px solid blue; */
+  display: flex;
+  flex-flow: column;
+  padding: 10px 5px 20px 5px;
+  font-family: arial;
+  font-size: 1.25em;
+}
+#mapctrl-heading {
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+}
+#mapctrl-infoblock {
+  font-size: 1em;
+  background-color: red;
+  color: white;
+  margin: 5px 0px 5px 0px;
+  padding: 5px 10px 5px 10px;
+}
+#mapctrl-text {
+  font-size: 0.8em;
+  margin: 5px 0px 15px 0px;
+}
+
+#scale {
+  /* use javascript to display it when map draws*/
+  /* display: flex; */
+  display: none;
+  flex-flow: column;
+  /* position: absolute; */
+  /* top: 5px;
+  left: 50px; */
+  padding: 10px 0px 0px 50px;
+  margin: 0px;
+  width: 200px;
+}
+#scaletext {
+  display: flex;
+  flex-flow: row;
+  color: #555555;
+  width: 100%;
+  font-size: 0.8em;
+  justify-content: space-between;
+}
+#scalefill {
+  height: 15px;
+  width: 100%;
+  background-image: linear-gradient(to right, #ffffff,#ff4466);
+  border: 1px solid grey;
+}
+#statepicker {
+  font-size: 1em;
+}
+#viewoption {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

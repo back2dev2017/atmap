@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="$1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Map playing</title>
+    <style>
+      .boundary {
+        fill: #ddd;
+        stroke: #888;
+        stroke-linejoin: round;
+      }
+      svg {
+        border-style: solid;
+        border-width: 1px;
+        border-color: #ccc;
+      }
+      .overlay {
+        fill: none;
+        pointer-events: all;
+      }
+      #tooltip {
+        position: absolute;
+        z-index: 2;
+        background: rgba(0,153,76,0.8);
+        width:130px;
+        height:20px;
+        color:white;
+        font-size: 14px;
+        padding:5px;
+        top:-150px;
+        left:-150px;
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tooltip"></div>
+    <div id="map"></div>
+
+    <script src="d3.js"></script>
+    <script src="topojson.v1.min.js"></script>
+
+    <script>
+      (function() {
+        var height = 600;
+        var width = 900;
+        var projection = d3.geoMercator();
+        var map = void 0;
+        var country = void 0;
+
+        var hover = function(d) {
+          var mydiv = document.getElementById('tooltip')
+          console.log(d);
+          mydiv.style.left = event.pageX + 'px';
+          mydiv.style.top = event.pageY + 'px';
+          mydiv.innerHTML = d.properties.NAME_1;
+        };
+
+        var path = d3.geoPath().projection(projection);
+
+        var svg = d3.select('#map')
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height)
+        
+        var zoomed = function () {
+          map.attr("transform", "translate("+ d3.event.transform.x + "," + d3.event.transform.y +")scale(" + d3.event.transform.k + ")");
+        };
+
+        var zoom = d3.zoom()
+          .scaleExtent([1, 8])
+          .on("zoom", zoomed);
+
+        d3.json('geo-data.json').then(function(data) {
+          var states = topojson.feature(data, data.objects.MEX_adm1);
+          var b, s, t;
+          projection.scale(1).translate([0,0]);
+
+          // get the max bounds of all the values - creates array bottom/left, top/right
+          var b = path.bounds(states);
+          var s = .9 / (Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height));
+          var t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+          projection.scale(s).translate(t);
+
+          var color=d3.scaleLinear().domain([0,9]).range(['green','blue']);
+
+          map = svg.append('g').attr('class', 'boundary');
+          country = map.selectAll('path').data(states.features);
+
+          country.enter()
+            .append('path')
+            .attr('d', path)
+            .on('mouseover', hover)
+            .attr('fill', function(d,i) {return color(Math.random()*9);});
+
+          country.exit().remove();
+
+          svg.append('rect')
+            .attr('class','overlay')
+            .attr('width', width)
+            .attr('height', height)
+            .call(zoom);
+        });
+      })();
+
+    </script>
+
+  </body>
+</html>

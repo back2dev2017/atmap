@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="$1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Map playing</title>
+    <link rel="stylesheet" href="css/at_map.css">
+
+    <style>
+
+    </style>
+    <script src="js/jquery-3.2.1.js"></script>
+    <script src="js/d3.js"></script>
+    <script src="js/topojson.v2.min.js"></script>
+    <!-- <script src="js/datatables.min.js"></script> -->
+    <!-- <script src="js/pfmajs.js"></script> -->
+    <!-- <script src="js/d3.v4.min.js"></script> -->
+    <!-- <script src="js/c3.js"></script> -->
+    <script src="js/at_map.js"></script>
+
+  </head>
+  <body>
+    <div id="labeltip">
+      <div id='mainline'></div>
+      <div id='subline'></div>
+    </div>
+    <div id='mapnote'>(mouse over to see state need)</div>
+    <div id='maincontainer'>
+      <div id='mapcontainer'>
+        <div id='scale'>
+          <div id=scaletext>
+            <div id='scalelowtext'>Less Need</div>
+            <div id='scalehightext'>More Need</div>
+          </div>
+          <div id=scalefill></div>
+        </div>        
+        <div id='map'>
+        </div>
+      </div>
+      <div id='mapcontrols'>
+        <div id='mapctrl-heading'>DELIVER A GIFT TO AN ANGEL TREE CHILD NEAR YOU</div>
+        <div id='mapctrl-infoblock'>REGISTERED, MATCHED, UNMATCHED</div>
+        <div id='mapctrl-text'>
+          Angel Tree relies on local churches and community organizations to give 
+          hundreds of thousands of children a gift, the Gospel, and a personal message 
+          of love on behalf of their incarcerated parent. Thousands of partners have 
+          already committed to serve more than 285,000 kids this year, but there are 
+          still communities across the country where we need your help to bring an 
+          Angel Tree Christmas to prisoners' children.
+        </div>
+        <label for='statepicker'>Select a State:</label>
+        <select id='statepicker' onchange='drawonestate(this.value)'></select>
+        <div id=countyselection>
+          <label for='countypicker'>Select a County:</label>
+          <select id='countypicker' onchange="showcountyinfo(this.value)"></select>
+        </div>
+        
+        <div id='viewoption'>
+          <label for='viewpick'>Choose View Type</label><br>
+          <input type='radio' name='viewpick' value='base' checked=true onchange='numbersviewchange(this)'> Registered and Matched<br>
+          <input type='radio' name='viewpick' value='remaining' onchange='numbersviewchange(this)'> Unmatched<br>
+        </div>
+
+        <div id='back2nation'>
+          <button id=drawnation onclick='drawnation()'>National View</button>
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
+
+
+    <script>
+      var dataobj = {};
+      dataobj.statelist = [];
+      $(document).ready(function() {
+        // set up some global variables
+        initialsetup();
+        // display the dashboard to start
+      });
+    </script>
+
+  </body>
+</html>
