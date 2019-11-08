@@ -10,14 +10,52 @@ svg {
   /* border-width: 1px;
   border-color: #ccc; */
 }
+
 #back2nation {
   display: none;
 }
+
+.btn-standard {
+	background-color: #446677;
+	/* border-radius: 8px; */
+	color: white;
+	font-size: 0.9em;
+	font-weight: bold;
+	padding: 10px 22px 10px 22px;
+}
+
+.btn-standard:hover {
+/* this box-shadow had multiple shadows defined, kinda cool */
+	box-shadow: 4px 4px 4px 4px rgba(0,0,0,0.50)
+}
+
 #countyselection {
   display: none;
   flex-flow: column;
   margin-top: 5px;
 }
+#countydetails {
+  margin-top: 5px;
+  font-size: 0.8em;
+  padding: 2px 4px 2px 4px;
+  border-radius: 4px;
+  border: 2px solid rgba(0,0,0,0);
+}
+
+.countyborder-anim {
+  animation-duration: 1s;
+  animation-name: countydetails-anim;
+}
+
+@keyframes countydetails-anim {
+  0%  {border: 2px solid blue}
+  20% {border: 2px solid rgba(0,0,255,0.9);}
+  40% {border: 2px solid rgba(0,0,255,0.7);}
+  60% {border: 2px solid rgba(0,0,255,0.5);}
+  80% {border: 2px solid rgba(0,0,255,0.3);}
+  100% {border: 2px solid rgba(0,0,255,0.0);}
+}
+
 #countypicker {
   font-size: 1em;
 }
@@ -26,8 +64,8 @@ svg {
   display: flex;
   flex-flow: column nowrap;
   z-index: 2;
-  background: rgba(255,88,88,0.8);
-  border: 1px solid darkred;
+  background: rgba(164,128,88,0.8);
+  border: 1px solid black;
   width:200px;
   height:40px;
   color:white;
@@ -120,7 +158,8 @@ svg {
 #scalefill {
   height: 15px;
   width: 100%;
-  background-image: linear-gradient(to right, #ffffff,#ff4466);
+  background-image: linear-gradient(to right, #ffffff,#ff4466); 
+  /* background-image: linear-gradient(to right, #ffffff,#44aa66);  */
   border: 1px solid grey;
 }
 #statepicker {
@@ -129,4 +168,8 @@ svg {
 #viewoption {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.hidediv {
+  display: none;
 }

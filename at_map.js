@@ -16,19 +16,8 @@ function initialsetup() {
   $('#mapnote').width(dataobj.boxwidth - 20);
   $('#scale').css({display: 'flex'});
   // put a listener over the map controls to remove any pop-up labels
-  let sidediv = document.getElementById('mapcontrols');
+  let sidediv = document.getElementById('mapcontrols')
   sidediv.addEventListener('mouseover', function() {$('#labeltip').css({display:'none'});}, false);
-
-  //   look at parameters passed in URL. Some of these drive available options and view. So check things at the end of
-  // this setup code, and override desired items
-  dataobj.urlobj = new URLSearchParams(location.search);
-  dataobj.dataview_restriction = dataobj.urlobj.get('dv');
-  if (dataobj.dataview_restriction != null) {
-    // if the dv= was passed, do not give option to switch and then set view accordingly
-    $('#viewoption').addClass('hidediv');
-    dataobj.dataviewtype = (dataobj.dataview_restriction == 'assigned') ? 'base' : 'remaining';
-    setupscaledisplay(dataobj.dataviewtype);
-  };
 };
 
 function loadnationstates() {
@@ -229,9 +218,8 @@ function drawnation() {
         dataobj.mapcolors = d3.scaleLinear().domain([0,dataobj.statemaxremaining]).range(['#ffffff','#ff4466']);
         dispval = dataobj.stateinfo[d.properties.name].remaining;
       } else {
-        // dataobj.mapcolors = d3.scaleLinear().domain([0,(dataobj.statemaxneed - dataobj.statemaxremaining)]).range(['#ffffff','#44aa66']);
-        dataobj.mapcolors = d3.scaleLinear().domain([0,100]).range(['#ffffff','#44aa66']);
-        dispval = dataobj.stateinfo[d.properties.name].assignedpct;
+        dataobj.mapcolors = d3.scaleLinear().domain([0,(dataobj.statemaxneed - dataobj.statemaxremaining)]).range(['#ffffff','#ff4466']);
+        dispval = dataobj.stateinfo[d.properties.name].assigned;
       }
       return dataobj.mapcolors(dispval);})
     .on('mouseover', mystatehover)
@@ -257,7 +245,7 @@ function drawonestate(statename) {
       let tmpitem = item;
       if (item.properties.state == state2pull) {
         // console.log(item.properties.state, item.properties.name);
-        for (let i=0; i<dataobj.countyinfo.length; i++) {
+        for (let i=1; i<dataobj.countyinfo.length; i++) {
           if ((dataobj.countyinfo[i].county == item.properties.name) && (dataobj.countyinfo[i].state == item.properties.state)) {
             // if I found the right state and county, return an object with need, assigned, remaining properties
             if (typeof(dataobj.countyinfo[i].assigned) == "undefined") {
@@ -265,19 +253,13 @@ function drawonestate(statename) {
               tmpitem['need'] = 0;
               tmpitem['assigned'] = 0;
               tmpitem['remaining'] = 0;
-              tmpitem['assignedpct'] = 100;
               break;
             } else {
               tmpitem['need'] = dataobj.countyinfo[i].need;
               tmpitem['assigned'] = dataobj.countyinfo[i].assigned;
               tmpitem['remaining'] = dataobj.countyinfo[i].remaining;
-              tmpitem['assignedpct'] = (dataobj.countyinfo[i].need == 0) ? 
-                                              100 : 
-                                              Math.round((dataobj.countyinfo[i].assigned/dataobj.countyinfo[i].need) * 100);
               break;
             };
-          } else {
-            // console.log('did not find something: ', item.properties.name);
           };
         };
         return tmpitem;
@@ -293,18 +275,11 @@ function drawonestate(statename) {
       dataobj.tmpmaxassigned = Math.max(dataobj.tmpmaxassigned, item.assigned);
     });
     
-      // set up the scale for colors, consider type of view
-    // if (dataobj.dataviewtype == 'remaining') {
-    //   dataobj.statecolors = d3.scaleLinear().domain([0,dataobj.tmpmaxremaining]).range(['#ffffff','#ff4466']);
-    // } else {
-    //   dataobj.statecolors = d3.scaleLinear().domain([0,dataobj.tmpmaxassigned]).range(['#ffffff','#ff4466']);
-    // };
-
+        // set up the scale for colors, consider type of view
     if (dataobj.dataviewtype == 'remaining') {
       dataobj.statecolors = d3.scaleLinear().domain([0,dataobj.tmpmaxremaining]).range(['#ffffff','#ff4466']);
     } else {
-      // dataobj.statecolors = d3.scaleLinear().domain([0,dataobj.tmpmaxassigned]).range(['#ffffff','#44aa66']);
-      dataobj.statecolors = d3.scaleLinear().domain([0,100]).range(['#ffffff','#44aa66']);
+      dataobj.statecolors = d3.scaleLinear().domain([0,dataobj.tmpmaxassigned]).range(['#ffffff','#ff4466']);
     };
 
     let projection = d3.geoMercator();
@@ -320,7 +295,7 @@ function drawonestate(statename) {
     s = .9 / (Math.max((b[1][0] - b[0][0]) / dataobj.boxwidth, (b[1][1] - b[0][1]) / dataobj.boxheight));
     t = [(dataobj.boxwidth - s * (b[1][0] + b[0][0])) / 2, (dataobj.boxheight - s * (b[1][1] + b[0][1])) / 2];
     projection.scale(s).translate(t);
-   
+    
     $('#svgarea').remove();
     dataobj.svg = null;
     dataobj.svg = d3.select('#map')
@@ -337,7 +312,7 @@ function drawonestate(statename) {
       .append('path')
       .attr('d', path)
       .attr('fill', function(d,i) {
-        let val2use = (dataobj.dataviewtype == 'remaining' ? d.remaining : d.assignedpct);
+        let val2use = (dataobj.dataviewtype == 'remaining' ? d.remaining : d.assigned);
         return dataobj.statecolors(val2use);
       })
       .on('mouseover', mycountyhover)
@@ -389,21 +364,21 @@ function loadchilddata () {
     dataobj.stateinfo[item.properties.state].need = 0;
     dataobj.stateinfo[item.properties.state].assigned = 0;
     dataobj.stateinfo[item.properties.state].remaining = 0;
-    dataobj.stateinfo[item.properties.state].assignedpct = 100;
+    dataobj.stateinfo[item.properties.state].assignedpct = 0;
   });
 
   let cntyassigned = cntyneed = 0;
   dataobj.statedata.objects.collection.geometries.forEach(function(item) {
     // randomize a need, then randomize assigned (always <= need)
     cntyneed = Math.round(Math.random() * 180);
-    cntyassigned = Math.max(Math.round((Math.random() * cntyneed)), 0);
+    cntyassigned = Math.max(Math.round((Math.random() * cntyneed)-40), 0);
     // add the info to the countinfo array - an object {state, county, need, assigned}
     let tmpobj = {'county':item.properties.name, 
                   'state':item.properties.state, 
                   'assigned':cntyassigned, 
                   'need':cntyneed, 
                   'remaining':cntyneed-cntyassigned,
-                  'assignedpct': (cntyneed == 0) ? 100 : Math.round((cntyassigned/cntyneed) * 100)
+                  'assignedpct': cntyneed == 0 ? 0 : Math.round((cntyassigned/cntyneed) * 100)
                 };
     dataobj.countyinfo.push(tmpobj);
     // add info to the state summing - note the "+=" syntax - calculating on the fly so do not have to loop through again later
@@ -414,13 +389,9 @@ function loadchilddata () {
     dataobj.kidsmatched += cntyassigned;
   });
 
-  // all states now have overall totals, so we can now calc for pct assigned, and national level 'color scale'
+  // now that we have the numbers and counts, we will set up the national level 'color scale'
   dataobj.statemaxneed = dataobj.statemaxremaining = 0;
   for (let key of Object.keys(dataobj.stateinfo)) {
-    let stateneed = dataobj.stateinfo[key].need;
-    let stateremain = dataobj.stateinfo[key].remaining;
-    let stateassigned = stateneed - stateremain;
-    dataobj.stateinfo[key].assignedpct = (stateneed == 0) ? 100 : Math.round((stateassigned/stateneed) * 100);
     dataobj.statemaxneed = Math.max(dataobj.statemaxneed, dataobj.stateinfo[key].need);
     dataobj.statemaxremaining = Math.max(dataobj.statemaxremaining, dataobj.stateinfo[key].remaining);
     // console.log(key, dataobj.stateinfo[key]);
@@ -452,9 +423,17 @@ function showcountyinfo(pvalue) {
 
 function numbersviewchange(optpick) {
   dataobj.dataviewtype = optpick.value;
-  setupscaledisplay(dataobj.dataviewtype);
+  if (optpick.value == 'remaining') {
+    $('#scalelowtext').text('Less Need');
+    $('#scalehightext').text('More Need');  
+  } else {
+    $('#scalelowtext').text('Fewer Assigned');
+    $('#scalehightext').text('More Assigned');  
+  };
+  
   // call a function to update the #mapctrl-infoblock
   infoblockupdate(optpick);
+
   // now do the redrawing - code in drawing functions should account for view type
   if (dataobj.viewlevel == 'nation') {
     drawnation();
@@ -462,18 +441,6 @@ function numbersviewchange(optpick) {
     // recall the .viewlevel is set to the state name if not nation, so draw the right state
     drawonestate(dataobj.viewlevel);
   }
-};
-
-function setupscaledisplay(viewtype) {
-  if (viewtype == 'remaining') {
-    $('#scalelowtext').text('Less Need');
-    $('#scalehightext').text('More Need');  
-    $('#scalefill').css({'background-image':'linear-gradient(to right, #ffffff,#ff4466)'})
-  } else {
-    $('#scalelowtext').text('0% Assigned');
-    $('#scalehightext').text('100% Assigned');  
-    $('#scalefill').css({'background-image':'linear-gradient(to right, #ffffff,#44aa66)'})
-  };
 };
 
 function infoblockupdate() {

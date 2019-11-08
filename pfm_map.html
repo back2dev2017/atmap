@@ -8,9 +8,6 @@
     <title>Map playing</title>
     <link rel="stylesheet" href="css/at_map.css">
 
-    <style>
-
-    </style>
     <script src="js/jquery-3.2.1.js"></script>
     <script src="js/d3.js"></script>
     <script src="js/topojson.v2.min.js"></script>
@@ -46,7 +43,7 @@
           Angel Tree relies on local churches and community organizations to give 
           hundreds of thousands of children a gift, the Gospel, and a personal message 
           of love on behalf of their incarcerated parent. Thousands of partners have 
-          already committed to serve more than 285,000 kids this year, but there are 
+          already committed to serve more than <span id=kidcount>285,000</span> kids this year, but there are 
           still communities across the country where we need your help to bring an 
           Angel Tree Christmas to prisoners' children.
         </div>
@@ -55,16 +52,20 @@
         <div id=countyselection>
           <label for='countypicker'>Select a County:</label>
           <select id='countypicker' onchange="showcountyinfo(this.value)"></select>
+          <div id='countydetails'>
+
+          </div>
         </div>
+
         
         <div id='viewoption'>
-          <label for='viewpick'>Choose View Type</label><br>
-          <input type='radio' name='viewpick' value='base' checked=true onchange='numbersviewchange(this)'> Registered and Matched<br>
-          <input type='radio' name='viewpick' value='remaining' onchange='numbersviewchange(this)'> Unmatched<br>
+          <label for='viewpick'>Choose View</label><br>
+          <input type='radio' name='viewpick' value='remaining' checked=true onchange='numbersviewchange(this)'> Unassigned<br>
+          <input type='radio' name='viewpick' value='base' onchange='numbersviewchange(this)'> Assigned<br>
         </div>
 
         <div id='back2nation'>
-          <button id=drawnation onclick='drawnation()'>National View</button>
+          <button id=drawnation class='btn-standard' onclick='setview2nation()'>National View</button>
         </div>
       </div>
     </div>
